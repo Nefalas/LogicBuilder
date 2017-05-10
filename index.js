@@ -32,8 +32,18 @@ var connectActive = false;
 // Tools functions
 function toggleConnect() {
     connectActive = !connectActive;
-    connectButton.style.background = connectActive? "#1c6a32" : "#19367b";
+    connectButton.style.background = connectActive? "#96b97c" : "#30657b";
     container.style.cursor = connectActive? "crosshair" : "move";
+}
+
+function resetWires() {
+    connect.deleteAllWires();
+    redraw();
+}
+
+function resetZoom() {
+    scroller.zoomTo(1, false);
+    scroller.scrollTo(0, 0, false);
 }
 
 // Tiling
@@ -82,26 +92,21 @@ var paintDots = function(row, col, left, top, width, height, zoom) {
 // Draw function for wires
 var drawWires = function(row, col, left, top, width, height, zoom) {
     if (connect.hasWire(col, row)) {
-        var leftHasWire = connect.hasWire(col-1, row);
-        var rightHasWire = connect.hasWire(col+1, row);
-        var topHasWire = connect.hasWire(col, row-1);
-        var bottomHasWire = connect.hasWire(col, row+1);
-
         ctx.strokeStyle = "#ff0007";
 
-        if (leftHasWire) {
+        if (connect.hasLeftNeighbour(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left, top+.5*height);
         }
-        if (rightHasWire) {
+        if (connect.hasRightNeighbour(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+width, top+.5*height);
         }
-        if (topHasWire) {
+        if (connect.hasTopNeighbour(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+.5*width, top);
         }
-        if (bottomHasWire) {
+        if (connect.hasBottomNeighbour(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+.5*width, top+height);
         }
@@ -166,11 +171,9 @@ document.addEventListener("mousemove", function(e) {
         if (!connecting) {
             return;
         }
+
         connect.addPoint(getCellX(e.pageX), getCellY(e.pageY));
-        var left = scroller.getValues()["left"];
-        var top = scroller.getValues()["top"];
-        var zoom = scroller.getValues()["zoom"];
-        render(left, top, zoom);
+        redraw();
     } else {
         if (!mouseDown) {
             return;
@@ -190,6 +193,7 @@ document.addEventListener("mouseup", function(e) {
         if (!connecting) {
             return;
         }
+
         connect.checkCurrent();
         connecting = false;
     } else {
@@ -208,6 +212,13 @@ container.addEventListener(navigator.userAgent.indexOf("Firefox") > -1 ? "DOMMou
 }, false);
 
 // Helpers
+function redraw() {
+    var left = scroller.getValues()["left"];
+    var top = scroller.getValues()["top"];
+    var zoom = scroller.getValues()["zoom"];
+    render(left, top, zoom);
+}
+
 function getCellX(x) {
     var zoom = scroller.getValues()["zoom"];
     var left = scroller.getValues()["left"];
@@ -222,10 +233,8 @@ function getCellY(y) {
 
 // Testing
 function test() {
-    connect.newWire(5, 8);
-    connect.addPoint(8, 7);
-    connect.newWire(12, 1);
-    connect.addPoint(6, 4);
-
-    connect.logWires();
+    connect.newWire(1, 1);
+    connect.addPoint(2, 2);
+    connect.addPoint(3, 3);
+    redraw();
 }

@@ -40,10 +40,31 @@
     font-size: 20px;
     color: white;
     border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 #connect {
-    background: #19367b;
+    background: #30657b;
+}
+
+#connect:active {
+    background: #2b5166;
+}
+
+#delete-wires {
+    background: #ff5754;
+}
+
+#delete-wires:active {
+    background: #ad3c39;
+}
+
+#reset-zoom {
+    background: #96b97c;
+}
+
+#reset-zoom:active {
+    background: #749160;
 }
 
 #grid-container {
