@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logic Builder</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<div id="tools">
+    <div id="tools-title">
+        <p>Tools</p>
+    </div>
+    <div id="tools-container">
+        <button id="connect" onclick="toggleConnect()">Connect</button>
+    </div>
+</div>
+
+<div id="grid-container">
+    <canvas id="grid"></canvas>
+</div>
+
+<div id="map-container">
+    <canvas id="map" width="320" height="160"></canvas>
+</div>
+
+<script type="text/javascript" src="libs/Animate.js"></script>
+<script type="text/javascript" src="libs/Scroller.js"></script>
+<script type="text/javascript" src="helpers/Tiling.js"></script>
+<script type="text/javascript" src="tools/Connection.js"></script>
+<script type="text/javascript" src="index.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,231 @@
+// Initialize grid canvas size
+var clientWidth = 0;
+var clientHeight = 0;
+
+// Grid size
+var contentWidth = 4000;
+var contentHeight = 2000;
+// Cell size
+var cellWidth = 40;
+var cellHeight = 40;
+
+// Map size
+var fullMapWidth = 320;
+var fullMapHeight = 160;
+
+// Grid elements
+var container = document.getElementById('grid-container');
+var content = document.getElementById('grid');
+var ctx = content.getContext('2d');
+
+// Map elements
+var mapContainer = document.getElementById('map-container');
+var mapContent = document.getElementById('map');
+var mapCtx = mapContent.getContext('2d');
+
+// Tools elements
+var connectButton = document.getElementById("connect");
+
+// Tools variables
+var connectActive = false;
+
+// Tools functions
+function toggleConnect() {
+    connectActive = !connectActive;
+    connectButton.style.background = connectActive? "#1c6a32" : "#19367b";
+    container.style.cursor = connectActive? "crosshair" : "move";
+}
+
+// Tiling
+var tiling = new Tiling;
+
+// Connexion
+var connect = new Connection;
+
+// Render function called at every change
+var render = function(left, top, zoom) {
+    content.width = clientWidth;
+    content.height = clientHeight;
+
+    ctx.clearRect(0, 0, clientWidth, clientHeight);
+
+    tiling.setup(clientWidth, clientHeight, contentWidth, contentHeight, cellWidth, cellHeight);
+    tiling.render(left, top, zoom, paintCells);
+    tiling.render(left, top, zoom, paintDots);
+    tiling.render(left, top, zoom, drawWires);
+
+    drawMap(left, top, zoom);
+};
+
+// Paint functions for cells
+var paintCells = function(row, col, left, top, width, height, zoom) {
+    ctx.fillStyle = (row%2 === col%2) ? "#f0f0f0" : "#fff";
+    ctx.fillRect(left, top, width, height);
+
+    ctx.strokeStyle = "#c2c2c2";
+    ctx.moveTo(left, top+.5*height);
+    ctx.lineTo(left+width, top+.5*height);
+    ctx.moveTo(left+.5*width, top);
+    ctx.lineTo(left+.5*width, top+height);
+};
+
+// Paint function for dots
+var paintDots = function(row, col, left, top, width, height, zoom) {
+    ctx.fillStyle = connect.hasWire(col, row)? "#ff0007" : "#686868";
+    if (zoom > .95) {
+        ctx.fillRect(left + .5*width - 2, top + .5*height - 2, 4, 4);
+    } else {
+        ctx.fillRect(left + .5*width - 1, top + .5*height - 1, 2, 2);
+    }
+};
+
+// Draw function for wires
+var drawWires = function(row, col, left, top, width, height, zoom) {
+    if (connect.hasWire(col, row)) {
+        var leftHasWire = connect.hasWire(col-1, row);
+        var rightHasWire = connect.hasWire(col+1, row);
+        var topHasWire = connect.hasWire(col, row-1);
+        var bottomHasWire = connect.hasWire(col, row+1);
+
+        ctx.strokeStyle = "#ff0007";
+
+        if (leftHasWire) {
+            ctx.moveTo(left+.5*width, top+.5*height);
+            ctx.lineTo(left, top+.5*height);
+        }
+        if (rightHasWire) {
+            ctx.moveTo(left+.5*width, top+.5*height);
+            ctx.lineTo(left+width, top+.5*height);
+        }
+        if (topHasWire) {
+            ctx.moveTo(left+.5*width, top+.5*height);
+            ctx.lineTo(left+.5*width, top);
+        }
+        if (bottomHasWire) {
+            ctx.moveTo(left+.5*width, top+.5*height);
+            ctx.lineTo(left+.5*width, top+height);
+        }
+
+    }
+};
+
+// Draw function for map
+var drawMap = function(left, top, zoom) {
+    var mapLeft = (left*.08)/zoom;
+    var mapTop = (top*.08)/zoom;
+    var mapWidth = (clientWidth*.08)/zoom;
+    var mapHeight = (clientHeight*.08)/zoom;
+
+    mapCtx.clearRect(0, 0, fullMapWidth, fullMapHeight);
+    mapCtx.fillStyle = "#c5c5c5";
+    mapCtx.fillRect(mapLeft, mapTop, mapWidth, mapHeight);
+};
+
+// Scroller object
+var scroller = new Scroller(render, {
+    zooming: true,
+    bouncing: false,
+    locking: false
+});
+
+// Setting scroller position for zooming
+var rect = container.getBoundingClientRect();
+scroller.setPosition(rect.left + container.clientLeft, rect.top + container.clientTop);
+
+// Called on resize
+var reflow = function() {
+    clientWidth = container.clientWidth;
+    clientHeight = container.clientHeight;
+    scroller.setDimensions(clientWidth, clientHeight, contentWidth, contentHeight);
+};
+window.addEventListener("resize", reflow, false);
+reflow();
+
+// Event listeners for zooming, scrolling and drawing
+var mouseDown = false;
+var connecting = false;
+
+container.addEventListener("mousedown", function(e) {
+    if (connectActive) {
+        if (!connecting) {
+            connecting = true;
+            connect.newWire(getCellX(e.pageX), getCellY(e.pageY));
+        }
+    } else {
+        scroller.doTouchStart([{
+            pageX: e.pageX,
+            pageY: e.pageY
+        }], e.timeStamp);
+
+        mouseDown = true;
+    }
+}, false);
+
+document.addEventListener("mousemove", function(e) {
+    if (connectActive) {
+        if (!connecting) {
+            return;
+        }
+        connect.addPoint(getCellX(e.pageX), getCellY(e.pageY));
+        var left = scroller.getValues()["left"];
+        var top = scroller.getValues()["top"];
+        var zoom = scroller.getValues()["zoom"];
+        render(left, top, zoom);
+    } else {
+        if (!mouseDown) {
+            return;
+        }
+
+        scroller.doTouchMove([{
+            pageX: e.pageX,
+            pageY: e.pageY
+        }], e.timeStamp);
+
+        mouseDown = true;
+    }
+}, false);
+
+document.addEventListener("mouseup", function(e) {
+    if (connectActive) {
+        if (!connecting) {
+            return;
+        }
+        connect.checkCurrent();
+        connecting = false;
+    } else {
+        if (!mouseDown) {
+            return;
+        }
+
+        scroller.doTouchEnd(e.timeStamp);
+
+        mouseDown = false;
+    }
+}, false);
+
+container.addEventListener(navigator.userAgent.indexOf("Firefox") > -1 ? "DOMMouseScroll" :  "mousewheel", function(e) {
+    scroller.doMouseZoom(e.detail ? (e.detail * 120) : -e.wheelDelta, e.timeStamp, e.pageX, e.pageY);
+}, false);
+
+// Helpers
+function getCellX(x) {
+    var zoom = scroller.getValues()["zoom"];
+    var left = scroller.getValues()["left"];
+    return Math.floor((x - rect.left + container.clientLeft + left)/(cellWidth * zoom));
+}
+
+function getCellY(y) {
+    var zoom = scroller.getValues()["zoom"];
+    var top = scroller.getValues()["top"];
+    return Math.floor((y - rect.top + container.clientTop + top)/(cellHeight * zoom));
+}
+
+// Testing
+function test() {
+    connect.newWire(5, 8);
+    connect.addPoint(8, 7);
+    connect.newWire(12, 1);
+    connect.addPoint(6, 4);
+
+    connect.logWires();
+}
