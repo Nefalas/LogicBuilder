@@ -46,6 +46,16 @@ function resetZoom() {
     scroller.scrollTo(0, 0, false);
 }
 
+$(".toolbox-tools img").draggable({
+    helper: "clone"
+});
+
+$("#grid").droppable({
+    drop: function(event, ui) {
+        console.log("Component: " + ui.draggable[0].name + " to cell: " + getCellX(event.pageX) + ", " + getCellY(event.pageY));
+    }
+});
+
 // Tiling
 var tiling = new Tiling;
 
@@ -94,6 +104,7 @@ var drawWires = function(row, col, left, top, width, height, zoom) {
     if (connect.hasWire(col, row)) {
         ctx.strokeStyle = "#ff0007";
 
+        // TODO: use UUID
         if (connect.hasLeftNeighbour(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left, top+.5*height);

@@ -1,12 +1,17 @@
 *{
     margin: 0;
     padding: 0;
-    overflow: hidden;
     font-family: Arial, sans-serif;
 }
 
 *:focus {
     outline: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 #tools {
@@ -67,6 +72,33 @@
     background: #749160;
 }
 
+.toolbox {
+    border: 2px solid #363636;
+}
+
+.toolbox-title {
+    height: 30px;
+    line-height: 30px;
+    font-size: 20px;
+    text-align: center;
+    color: white;
+    background: #3e3e3e;
+}
+
+.toolbox-tools {
+    padding: 3px 1px 0 1px;
+    text-align: center;
+    background: #a7a7a7;
+}
+
+.toolbox-tools img {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    cursor: move;
+    z-index: 100;
+}
+
 #grid-container {
     position: absolute;
     left: 250px;
@@ -79,6 +111,7 @@
 #grid {
     width: 100%;
     height: 100%;
+    z-index: 50;
 }
 
 #map-container {
