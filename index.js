@@ -259,8 +259,5 @@ function getCellY(y) {
 
 // Testing
 function test() {
-    connect.newWire(1, 1);
-    connect.addPoint(2, 2);
-    connect.addPoint(3, 3);
-    redraw();
+    connect.logWires();
 }
