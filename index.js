@@ -52,15 +52,19 @@ $(".toolbox-tools img").draggable({
 
 $("#grid").droppable({
     drop: function(event, ui) {
-        console.log("Component: " + ui.draggable[0].name + " to cell: " + getCellX(event.pageX) + ", " + getCellY(event.pageY));
+        var x = getCellX(event.pageX);
+        var y = getCellY(event.pageY);
+        var type = ui.draggable[0].name;
+        console.log("Component: " + type + " to cell: " + x + ", " + y);
+        basicComponent.newComponent(x, y, type);
+        redraw();
     }
 });
 
-// Tiling
+// Objects
 var tiling = new Tiling;
-
-// Connexion
 var connect = new Connection;
+var basicComponent = new BasicComponent;
 
 // Render function called at every change
 var render = function(left, top, zoom) {
@@ -70,15 +74,16 @@ var render = function(left, top, zoom) {
     ctx.clearRect(0, 0, clientWidth, clientHeight);
 
     tiling.setup(clientWidth, clientHeight, contentWidth, contentHeight, cellWidth, cellHeight);
-    tiling.render(left, top, zoom, paintCells);
-    tiling.render(left, top, zoom, paintDots);
+    tiling.render(left, top, zoom, drawCells);
+    tiling.render(left, top, zoom, drawDots);
     tiling.render(left, top, zoom, drawWires);
+    tiling.render(left, top, zoom, drawBasicComponenets);
 
     drawMap(left, top, zoom);
 };
 
 // Paint functions for cells
-var paintCells = function(row, col, left, top, width, height, zoom) {
+var drawCells = function(row, col, left, top, width, height, zoom) {
     ctx.fillStyle = (row%2 === col%2) ? "#f0f0f0" : "#fff";
     ctx.fillRect(left, top, width, height);
 
@@ -90,7 +95,7 @@ var paintCells = function(row, col, left, top, width, height, zoom) {
 };
 
 // Paint function for dots
-var paintDots = function(row, col, left, top, width, height, zoom) {
+var drawDots = function(row, col, left, top, width, height, zoom) {
     ctx.fillStyle = connect.hasWire(col, row)? "#ff0007" : "#686868";
     if (zoom > .95) {
         ctx.fillRect(left + .5*width - 2, top + .5*height - 2, 4, 4);
@@ -122,6 +127,14 @@ var drawWires = function(row, col, left, top, width, height, zoom) {
             ctx.lineTo(left+.5*width, top+height);
         }
 
+    }
+};
+
+var drawBasicComponenets = function(row, col, left, top, width, height, zoom) {
+    var uuid = basicComponent.getComponentUUID(col, row);
+    if (uuid !== -1) {
+        var image = basicComponent.getComponentImage(uuid);
+        ctx.drawImage(image, left, top, cellWidth*zoom, cellHeight*zoom);
     }
 };
 

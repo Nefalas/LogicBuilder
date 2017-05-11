@@ -8,7 +8,7 @@
  */
 
 /**
- * Helper class for doing tile distribution and paintCells callbacks on a predefined area when
+ * Helper class for doing tile distribution and drawCells callbacks on a predefined area when
  * location to render is being modified.
  */
 Tiling = function() {
@@ -40,12 +40,12 @@ Tiling.prototype.setup = function(clientWidth, clientHeight, contentWidth, conte
 
 /**
  * Renders the given location on the area defined by {@link #setup} by calling
- * `paintCells(row, column, left, top, width, height, zoom)` as needed.
+ * `drawCells(row, column, left, top, width, height, zoom)` as needed.
  *
  * @param left {Number} Left position to render
  * @param top {Number} Top position to render
  * @param zoom {Number} Current zoom level (should be applied to `left` and `top` already)
- * @param paint {Function} Callback method for every tile to paintCells.
+ * @param paint {Function} Callback method for every tile to drawCells.
  */
 Tiling.prototype.render = function(left, top, zoom, paint) {
 

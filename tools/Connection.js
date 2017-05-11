@@ -4,7 +4,7 @@ Connection = function() {
 };
 
 Connection.prototype.newWire = function(x, y) {
-    var wireName = generateUUID();
+    var wireName = (new UUID).generateUUID();
     this.current = wireName;
     this.wires[wireName] = [new Point(x, y)];
 };
@@ -15,20 +15,14 @@ Connection.prototype.addPoint = function(x, y) {
     var lastY = lastPoint.getY();
     if (!(lastX === x && lastY === y)) {
         while (!isConnected(x, y, lastX, lastY)) {
-            console.log("problem");
-
             if (lastX > x) {
                 lastX--;
-                console.log(lastX + "  " + x);
             } else if (lastX < x) {
                 lastX++;
-                console.log(lastX + "  " + x);
             } else if (lastY > y) {
                 lastY--;
-                console.log(lastY + "  " + y);
             } else if (lastY < y) {
                 lastY++;
-                console.log(lastY + "  " + y);
             }
             this.wires[this.current].push(new Point(lastX, lastY));
         }
@@ -174,15 +168,6 @@ Point = function(x, y) {
         return y;
     };
 };
-
-function generateUUID() {
-    var d = new Date().getTime();
-    return uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = (d + Math.random()*16)%16 | 0;
-        d = Math.floor(d/16);
-        return (c==='x' ? r : (r&0x3|0x8)).toString(16);
-    });
-}
 
 function isConnected(x, y, lastX, lastY) {
     return (x === lastX && (y === lastY-1 || y === lastY+1)) || ((x === lastX-1 || x === lastX+1) && y === lastY);
