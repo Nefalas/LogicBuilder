@@ -10,8 +10,8 @@ var cellWidth = 40;
 var cellHeight = 40;
 
 // Map size
-var fullMapWidth = 320;
-var fullMapHeight = 160;
+var fullMapWidth = contentWidth * .08;
+var fullMapHeight = contentHeight * .08;
 
 // Grid elements
 var container = document.getElementById('grid-container');
@@ -46,7 +46,7 @@ function resetZoom() {
     scroller.scrollTo(0, 0, false);
 }
 
-$(".toolbox-tools img").draggable({
+$(".tool-img").draggable({
     helper: "clone"
 });
 
@@ -106,23 +106,24 @@ var drawDots = function(row, col, left, top, width, height, zoom) {
 
 // Draw function for wires
 var drawWires = function(row, col, left, top, width, height, zoom) {
-    if (connect.hasWire(col, row)) {
+    var uuid = connect.getWireUUID(col, row);
+    if (uuid !== -1) {
         ctx.strokeStyle = "#ff0007";
+        ctx.lineWidth = 2;
 
-        // TODO: use UUID
-        if (connect.hasLeftNeighbour(col, row)) {
+        if (connect.hasLeftNeighbour(col, row) || basicComponent.hasLeftComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left, top+.5*height);
         }
-        if (connect.hasRightNeighbour(col, row)) {
+        if (connect.hasRightNeighbour(col, row) || basicComponent.hasRightComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+width, top+.5*height);
         }
-        if (connect.hasTopNeighbour(col, row)) {
+        if (connect.hasTopNeighbour(col, row) || basicComponent.hasTopComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+.5*width, top);
         }
-        if (connect.hasBottomNeighbour(col, row)) {
+        if (connect.hasBottomNeighbour(col, row) || basicComponent.hasBottomComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+.5*width, top+height);
         }
@@ -178,7 +179,7 @@ container.addEventListener("mousedown", function(e) {
     if (connectActive) {
         if (!connecting) {
             connecting = true;
-            connect.newWire(getCellX(e.pageX), getCellY(e.pageY));
+            connect.newWire(getCellX(e.pageX), getCellY(e.pageY), "red");
         }
     } else {
         scroller.doTouchStart([{

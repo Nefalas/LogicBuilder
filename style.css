@@ -25,6 +25,7 @@ html, body {
     bottom: 0;
     width: 250px;
     background: #656565;
+    border-right: 2px solid #363636;
 }
 
 #tools-title {
@@ -35,7 +36,7 @@ html, body {
     font-size: 30px;
     color: white;
     background: #3e3e3e;
-    border-bottom: 1px solid #363636;
+    border-bottom: 2px solid #363636;
 }
 
 #tools-container {
@@ -90,12 +91,11 @@ html, body {
 }
 
 .toolbox-tools {
-    padding: 3px 1px 0 1px;
-    text-align: center;
+    padding: 3px 2px 0 2px;
     background: #a7a7a7;
 }
 
-.toolbox-tools img {
+.tool-img {
     width: 50px;
     height: 50px;
     margin: 1px;
@@ -105,7 +105,7 @@ html, body {
 
 #grid-container {
     position: absolute;
-    left: 250px;
+    left: 252px;
     top: 0;
     right: 0;
     bottom: 0;

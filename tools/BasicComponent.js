@@ -24,6 +24,26 @@ BasicComponent.prototype.getComponentUUID = function(x, y) {
     return -1;
 };
 
+BasicComponent.prototype.hasComponent = function(x, y) {
+    return this.getComponentUUID(x, y) !== -1;
+};
+
+BasicComponent.prototype.hasLeftComponent = function(x, y) {
+    return this.hasComponent(x-1, y);
+};
+
+BasicComponent.prototype.hasRightComponent = function(x, y) {
+    return this.hasComponent(x+1, y);
+};
+
+BasicComponent.prototype.hasTopComponent = function(x, y) {
+    return this.hasComponent(x, y-1);
+};
+
+BasicComponent.prototype.hasBottomComponent = function(x, y) {
+    return this.hasComponent(x, y+1);
+};
+
 BasicComponent.prototype.getComponentImage = function(uuid) {
     var type = this.components[uuid].type;
     var image = new Image();
