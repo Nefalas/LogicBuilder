@@ -1,5 +1,7 @@
 # LogicBuilder
 
+Access LogicBuilder [here](https://nefalas.github.io/LogicBuilder/)
+
 ## What is LogicBuilder?
 
 LogicBuilder is a simulator for logic circuits that runs in your browser. It features a wide range of components as well as other electronic hardware. This tool is meant to be used by both for beginners for learning and professionals for prototyping.
@@ -23,4 +25,4 @@ In professional mode things work as they do in real life. The components interac
 
 ## Instructions
 
-Move around the grid by pressing down your mouse and dragging it. Zoom in and out using the mousewheel. Drag components from the tool panel and drop them on the grid. Click on the **Connect** button to draw wires on the grid. Press the **Run** button to start the simulation.
+Move around the grid by pressing down your mouse and dragging it. Zoom in and out using the mousewheel. Drag components from the tool panel and drop them on the grid. Click on the **Connect** button to draw wires on the grid. Press the **Run** button to start the simulation.rkdown link
