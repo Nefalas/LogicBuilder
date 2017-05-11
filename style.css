@@ -69,11 +69,11 @@ html, body {
     background: #ad3c39;
 }
 
-#reset-zoom {
+#reset-zoom, #run {
     background: #96b97c;
 }
 
-#reset-zoom:active {
+#reset-zoom:active, #run:active {
     background: #749160;
 }
 

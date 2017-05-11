@@ -220,6 +220,7 @@ document.addEventListener("mouseup", function(e) {
         }
 
         connect.checkCurrent();
+        redraw();
         connecting = false;
     } else {
         if (!mouseDown) {

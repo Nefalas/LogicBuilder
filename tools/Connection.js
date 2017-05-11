@@ -158,9 +158,14 @@ Connection.prototype.hasBottomNeighbour = function(x, y) {
 };
 
 Connection.prototype.checkCurrent = function() {
-    if (this.wires[this.current].points.length === 1) {
-        delete this.wires[this.current];
-        this.current = "";
+    var points = this.wires[this.current].points;
+    if (points.length === 1) {
+        var x = points[0].getX();
+        var y = points[0].getY();
+        if (!basicComponent.hasCloseComponent(x, y)) {
+            delete this.wires[this.current];
+            this.current = "";
+        }
     }
 };
 

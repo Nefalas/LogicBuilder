@@ -44,6 +44,13 @@ BasicComponent.prototype.hasBottomComponent = function(x, y) {
     return this.hasComponent(x, y+1);
 };
 
+BasicComponent.prototype.hasCloseComponent = function(x, y) {
+    return this.hasLeftComponent(x, y)
+        || this.hasRightComponent(x, y)
+        || this.hasTopComponent(x, y)
+        || this.hasBottomComponent(x, y);
+};
+
 BasicComponent.prototype.getComponentImage = function(uuid) {
     var type = this.components[uuid].type;
     var image = new Image();
