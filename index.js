@@ -260,4 +260,18 @@ function getCellY(y) {
 // Testing
 function test() {
     connect.logWires();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
