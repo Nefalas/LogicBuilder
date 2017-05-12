@@ -1,7 +1,17 @@
+/**
+ * Constructor for basic components
+ * @constructor Basic components object
+ */
 BasicComponent = function() {
     this.components = {};
 };
 
+/**
+ * Creates a new basic component
+ * @param x Horizontal cell position of the component
+ * @param y Vertical cell position of the component
+ * @param type Type of the component
+ */
 BasicComponent.prototype.newComponent = function(x, y, type) {
     if (this.getComponentUUID(x, y) === -1) {
         this.components[(new UUID).generateUUID()] = {
@@ -19,6 +29,12 @@ BasicComponent.prototype.newComponent = function(x, y, type) {
     }
 };
 
+/**
+ * Returns the UUID of the component at the given position, returns -1 if no component is found
+ * @param x Horizontal cell position of the component
+ * @param y Vertical cell position of the component
+ * @returns {*} The UUID of the component if found, -1 if not
+ */
 BasicComponent.prototype.getComponentUUID = function(x, y) {
     for (var uuid in this.components) {
         if (this.components.hasOwnProperty(uuid)) {
@@ -30,26 +46,62 @@ BasicComponent.prototype.getComponentUUID = function(x, y) {
     return -1;
 };
 
+/**
+ * Informs if a component is present at the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a component is found, false if not
+ */
 BasicComponent.prototype.hasComponent = function(x, y) {
     return this.getComponentUUID(x, y) !== -1;
 };
 
+/**
+ * Informs if a component is present on the left of the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a component is found, false if not
+ */
 BasicComponent.prototype.hasLeftComponent = function(x, y) {
     return this.hasComponent(x-1, y);
 };
 
+/**
+ * Informs if a component is present on the right of the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a component is found, false if not
+ */
 BasicComponent.prototype.hasRightComponent = function(x, y) {
     return this.hasComponent(x+1, y);
 };
 
+/**
+ * Informs if a component is present on the top of the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a component is found, false if not
+ */
 BasicComponent.prototype.hasTopComponent = function(x, y) {
     return this.hasComponent(x, y-1);
 };
 
+/**
+ * Informs if a component is present on the bottom of the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a component is found, false if not
+ */
 BasicComponent.prototype.hasBottomComponent = function(x, y) {
     return this.hasComponent(x, y+1);
 };
 
+/**
+ * Informs if a component is present close to the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a component is found, false if not
+ */
 BasicComponent.prototype.hasCloseComponent = function(x, y) {
     return this.hasLeftComponent(x, y)
         || this.hasRightComponent(x, y)
@@ -57,10 +109,20 @@ BasicComponent.prototype.hasCloseComponent = function(x, y) {
         || this.hasBottomComponent(x, y);
 };
 
+/**
+ * Informs about the type of the component having the given UUID
+ * @param uuid UUID of the component
+ * @returns the type of the component
+ */
 BasicComponent.prototype.getType = function(uuid) {
     return this.components[uuid].type;
 };
 
+/**
+ * Provides the Image object of the component having the given UUID
+ * @param uuid UUID of the component
+ * @returns {*} the Image object of the component
+ */
 BasicComponent.prototype.getImage = function(uuid) {
     var src = this.components[uuid].imageSrc;
     var image = new Image();
@@ -68,14 +130,28 @@ BasicComponent.prototype.getImage = function(uuid) {
     return image;
 };
 
+/**
+ * Informs about the loading state of the Image object of the component having the given UUID
+ * @param uuid UUID of the component
+ * @returns {boolean|*} true if the Image object is loaded, false if not
+ */
 BasicComponent.prototype.isImageLoaded = function(uuid) {
     return this.components[uuid].imageLoaded;
 };
 
+/**
+ * Set the loading state of the Image object of the component having the given UUID
+ * @param uuid UUID of the component
+ * @param state true if the Image object is loaded, false if not
+ */
 BasicComponent.prototype.setImageLoaded = function(uuid, state) {
     this.components[uuid].imageLoaded = state;
 };
 
+/**
+ * Activates the component having the given UUID
+ * @param uuid UUID of the component
+ */
 BasicComponent.prototype.activate = function(uuid) {
     this.components[uuid].active = !this.components[uuid].active;
     var type = this.components[uuid].type;
@@ -90,6 +166,10 @@ BasicComponent.prototype.activate = function(uuid) {
     }
 };
 
+/**
+ * Activation function for components of type Switch
+ * @param uuid UUID of the Switch component
+ */
 BasicComponent.prototype.toggleSwitch = function(uuid) {
     var component = this.components[uuid];
     component.imageSrc = component.active? "res/switch_closed.png": "res/switch_open.png";

@@ -1,8 +1,18 @@
+/**
+ * Constructor for connections
+ * @constructor Connection object
+ */
 Connection = function() {
     this.wires = {};
     this.current = "";
 };
 
+/**
+ * Creates a new wire
+ * @param x Horizontal cell start position of the wire
+ * @param y Vertical cell start position of the wire
+ * @param color Color of the wire
+ */
 Connection.prototype.newWire = function(x, y, color) {
     var wireName = (new UUID).generateUUID();
     this.current = wireName;
@@ -15,6 +25,11 @@ Connection.prototype.newWire = function(x, y, color) {
     };
 };
 
+/**
+ * Adds a Point to the current wire
+ * @param x Horizontal cell position of the Point
+ * @param y Vertical cell position of the Point
+ */
 Connection.prototype.addPoint = function(x, y) {
     var points = this.wires[this.current].points;
     var lastPoint = points[points.length-1];
@@ -43,6 +58,9 @@ Connection.prototype.addPoint = function(x, y) {
     }
 };
 
+/**
+ * Outputs the UUID and Points of every wire
+ */
 Connection.prototype.logWires = function() {
     for (var name in this.wires) {
         if (this.wires.hasOwnProperty(name)) {
@@ -55,6 +73,12 @@ Connection.prototype.logWires = function() {
     }
 };
 
+/**
+ * Returns the UUID of the wire at the given position, returns -1 if no wire is found
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {*} The UUID of the wire if found, -1 if not
+ */
 Connection.prototype.getWireUUID = function(x, y) {
     for (var uuid in this.wires) {
         if (this.wires.hasOwnProperty(uuid)) {
@@ -69,10 +93,22 @@ Connection.prototype.getWireUUID = function(x, y) {
     return -1;
 };
 
+/**
+ * Informs if a wire Point is found at the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a wire is found, false if not
+ */
 Connection.prototype.hasWire = function(x, y) {
     return this.getWireUUID(x, y) !== -1;
 };
 
+/**
+ * Informs if a wire Point is present in the same wire on the left of the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a wire is found, false if not
+ */
 Connection.prototype.hasLeftNeighbour = function(x, y) {
     for (var uuid in this.wires) {
         if (this.wires.hasOwnProperty(uuid)) {
@@ -96,6 +132,12 @@ Connection.prototype.hasLeftNeighbour = function(x, y) {
     return false;
 };
 
+/**
+ * Informs if a wire Point is present in the same wire on the right of the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a wire is found, false if not
+ */
 Connection.prototype.hasRightNeighbour = function(x, y) {
     for (var uuid in this.wires) {
         if (this.wires.hasOwnProperty(uuid)) {
@@ -119,6 +161,12 @@ Connection.prototype.hasRightNeighbour = function(x, y) {
     return false;
 };
 
+/**
+ * Informs if a wire Point is present in the same wire on the top of the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a wire is found, false if not
+ */
 Connection.prototype.hasTopNeighbour = function(x, y) {
     for (var uuid in this.wires) {
         if (this.wires.hasOwnProperty(uuid)) {
@@ -142,6 +190,12 @@ Connection.prototype.hasTopNeighbour = function(x, y) {
     return false;
 };
 
+/**
+ * Informs if a wire Point is present in the same wire on the bottom of the given position
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {boolean} true if a wire is found, false if not
+ */
 Connection.prototype.hasBottomNeighbour = function(x, y) {
     for (var uuid in this.wires) {
         if (this.wires.hasOwnProperty(uuid)) {
@@ -165,10 +219,17 @@ Connection.prototype.hasBottomNeighbour = function(x, y) {
     return false;
 };
 
+/**
+ * Informs about the active state of the wire having the given UUID
+ * @param uuid true if the wire is active, false if not
+ */
 Connection.prototype.isActive = function(uuid) {
     return this.wires[uuid].active;
 };
 
+/**
+ * Corrects any errors present in the array of Points of the current wire and joins wires having common points
+ */
 Connection.prototype.checkCurrent = function() {
     var points = this.wires[this.current].points;
     if (points.length === 1) {
@@ -188,6 +249,12 @@ Connection.prototype.checkCurrent = function() {
     }
 };
 
+/**
+ * Informs if the two given wires have common Points
+ * @param uuid1 UUID of the first wire
+ * @param uuid2 UUID of the second wire
+ * @returns {boolean} true if the wires have common Points, false if not
+ */
 Connection.prototype.hasCommonPoint = function(uuid1, uuid2) {
     var points1 = this.wires[uuid1].points;
     var points2 = this.wires[uuid2].points;
@@ -205,16 +272,32 @@ Connection.prototype.hasCommonPoint = function(uuid1, uuid2) {
     return false;
 };
 
+/**
+ * Adds the Points of the second wire to the Points of the first wire and deletes the second wire
+ * @param uuid1 UUID of the first wire
+ * @param uuid2 UUID of the second wire
+ */
 Connection.prototype.joinWires = function(uuid1, uuid2) {
     this.wires[uuid1].points = this.wires[uuid1].points.concat(this.wires[uuid2].points);
     delete this.wires[uuid2];
 };
 
+/**
+ * Deletes all wires
+ */
 Connection.prototype.deleteAllWires = function() {
     this.wires = {};
     this.current = "";
 };
 
-function isConnected(x, y, lastX, lastY) {
-    return (x === lastX && (y === lastY-1 || y === lastY+1)) || ((x === lastX-1 || x === lastX+1) && y === lastY);
+/**
+ * Informs if two Points are connected
+ * @param x1 Horizontal cell position of the first wire
+ * @param y1 Vertical cell position of the first wire
+ * @param x2 Horizontal cell position of the second wire
+ * @param y2 Vertical cell position of the second wire
+ * @returns {boolean} true if the Points are connected, false if not
+ */
+function isConnected(x1, y1, x2, y2) {
+    return (x1 === x2 && (y1 === y2-1 || y1 === y2+1)) || ((x1 === x2-1 || x1 === x2+1) && y1 === y2);
 }
