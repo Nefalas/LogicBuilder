@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6a5d70ae-56ca-4986-886f-7e50c2b5934d" name="Default" comment="Added dropping">
+    <list default="true" id="6a5d70ae-56ca-4986-886f-7e50c2b5934d" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/BasicComponent.js" afterPath="$PROJECT_DIR$/tools/BasicComponent.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/Connection.js" afterPath="$PROJECT_DIR$/tools/Connection.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -364,7 +362,7 @@
       <workItem from="1494529076961" duration="14000" />
       <workItem from="1494580158481" duration="10552000" />
       <workItem from="1494599636334" duration="3034000" />
-      <workItem from="1494615689212" duration="2885000" />
+      <workItem from="1494615689212" duration="2917000" />
     </task>
     <task id="LOCAL-00001" summary="Small ui change">
       <created>1494416028173</created>
@@ -401,11 +399,18 @@
       <option name="project" value="LOCAL" />
       <updated>1494502361989</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Added comments and descriptions">
+      <created>1494618595242</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1494618595242</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="102106000" />
+    <option name="totallyTimeSpent" value="102138000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="2391" y="-9" width="2418" height="1318" extended-state="6" />
@@ -441,7 +446,8 @@
     <MESSAGE value="Fixed wire problem" />
     <MESSAGE value="Added dragging" />
     <MESSAGE value="Added dropping" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added dropping" />
+    <MESSAGE value="Added comments and descriptions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added comments and descriptions" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
