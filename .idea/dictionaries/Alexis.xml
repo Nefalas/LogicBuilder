@@ -4,6 +4,7 @@
       <w>mousedown</w>
       <w>mousemove</w>
       <w>mouseup</w>
+      <w>onload</w>
       <w>scroller</w>
     </words>
   </dictionary>

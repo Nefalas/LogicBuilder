@@ -9,7 +9,9 @@ Connection.prototype.newWire = function(x, y, color) {
     this.wires[wireName] = {
         points: [new Point(x, y)],
         color: color,
-        active: false
+        active: false,
+        hasSource: false,
+        hasGround: false
     };
 };
 
@@ -18,7 +20,7 @@ Connection.prototype.addPoint = function(x, y) {
     var lastPoint = points[points.length-1];
     var lastX = lastPoint.getX();
     var lastY = lastPoint.getY();
-    if (!(lastX === x && lastY === y)) {
+    if (pointsAreCorrect(x, y, lastX, lastY)) {
         while (!isConnected(x, y, lastX, lastY)) {
             if (lastX > x) {
                 lastX--;
@@ -32,6 +34,12 @@ Connection.prototype.addPoint = function(x, y) {
             points.push(new Point(lastX, lastY));
         }
         points.push(new Point(x, y));
+    }
+
+    function pointsAreCorrect(x, y, lastX, lastY) {
+        return !(lastX === x && lastY === y)
+            && (x >= 0 && y >= 0)
+            && (x < contentWidth/cellWidth && y < contentHeight/cellHeight)
     }
 };
 
@@ -157,6 +165,10 @@ Connection.prototype.hasBottomNeighbour = function(x, y) {
     return false;
 };
 
+Connection.prototype.isActive = function(uuid) {
+    return this.wires[uuid].active;
+};
+
 Connection.prototype.checkCurrent = function() {
     var points = this.wires[this.current].points;
     if (points.length === 1) {
@@ -167,24 +179,40 @@ Connection.prototype.checkCurrent = function() {
             this.current = "";
         }
     }
+    for (var uuid in this.wires) {
+        if (this.wires.hasOwnProperty(uuid)) {
+            if (uuid !== this.current && this.hasCommonPoint(this.current, uuid)) {
+                this.joinWires(this.current, uuid);
+            }
+        }
+    }
+};
+
+Connection.prototype.hasCommonPoint = function(uuid1, uuid2) {
+    var points1 = this.wires[uuid1].points;
+    var points2 = this.wires[uuid2].points;
+    for (var i = 0; i < points1.length; i++) {
+        var x1 = points1[i].getX();
+        var y1 = points1[i].getY();
+        for (var j = 0; j < points2.length; j++) {
+            var x2 = points2[j].getX();
+            var y2 = points2[j].getY();
+            if (x1 === x2 && y1 === y2) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+Connection.prototype.joinWires = function(uuid1, uuid2) {
+    this.wires[uuid1].points = this.wires[uuid1].points.concat(this.wires[uuid2].points);
+    delete this.wires[uuid2];
 };
 
 Connection.prototype.deleteAllWires = function() {
     this.wires = {};
     this.current = "";
-};
-
-Point = function(x, y) {
-    this.x = x;
-    this.y = y;
-
-    this.getX = function() {
-        return x;
-    };
-
-    this.getY = function() {
-        return y;
-    };
 };
 
 function isConnected(x, y, lastX, lastY) {

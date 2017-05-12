@@ -33,6 +33,7 @@ var connectActive = false;
 function toggleConnect() {
     connectActive = !connectActive;
     connectButton.style.background = connectActive? "#96b97c" : "#30657b";
+    connectButton.style.borderColor = connectActive? "#bde69e" : "#408caa";
     container.style.cursor = connectActive? "crosshair" : "move";
 }
 
@@ -55,7 +56,6 @@ $("#grid").droppable({
         var x = getCellX(event.pageX);
         var y = getCellY(event.pageY);
         var type = ui.draggable[0].name;
-        console.log("Component: " + type + " to cell: " + x + ", " + y);
         basicComponent.newComponent(x, y, type);
         redraw();
     }
@@ -77,7 +77,7 @@ var render = function(left, top, zoom) {
     tiling.render(left, top, zoom, drawCells);
     tiling.render(left, top, zoom, drawDots);
     tiling.render(left, top, zoom, drawWires);
-    tiling.render(left, top, zoom, drawBasicComponenets);
+    tiling.render(left, top, zoom, drawBasicComponents);
 
     drawMap(left, top, zoom);
 };
@@ -96,7 +96,12 @@ var drawCells = function(row, col, left, top, width, height, zoom) {
 
 // Paint function for dots
 var drawDots = function(row, col, left, top, width, height, zoom) {
-    ctx.fillStyle = connect.hasWire(col, row)? "#ff0007" : "#686868";
+    var wireUUID = connect.getWireUUID(col ,row);
+    if (wireUUID !== -1) {
+        ctx.fillStyle = connect.isActive(wireUUID)? "#ff0007" : "#ff939b";
+    } else {
+        ctx.fillStyle = "#686868";
+    }
     if (zoom > .95) {
         ctx.fillRect(left + .5*width - 2, top + .5*height - 2, 4, 4);
     } else {
@@ -108,7 +113,7 @@ var drawDots = function(row, col, left, top, width, height, zoom) {
 var drawWires = function(row, col, left, top, width, height, zoom) {
     var uuid = connect.getWireUUID(col, row);
     if (uuid !== -1) {
-        ctx.strokeStyle = "#ff0007";
+        ctx.strokeStyle = connect.isActive(uuid)? "#ff0007" : "#ff939b";
         ctx.lineWidth = 2;
 
         if (connect.hasLeftNeighbour(col, row) || basicComponent.hasLeftComponent(col, row)) {
@@ -131,11 +136,18 @@ var drawWires = function(row, col, left, top, width, height, zoom) {
     }
 };
 
-var drawBasicComponenets = function(row, col, left, top, width, height, zoom) {
+var drawBasicComponents = function(row, col, left, top, width, height, zoom) {
     var uuid = basicComponent.getComponentUUID(col, row);
     if (uuid !== -1) {
-        var image = basicComponent.getComponentImage(uuid);
-        ctx.drawImage(image, left, top, cellWidth*zoom, cellHeight*zoom);
+        var image = basicComponent.getImage(uuid);
+        if (basicComponent.isImageLoaded(uuid)) {
+            ctx.drawImage(image, left, top, cellWidth * zoom, cellHeight * zoom);
+        } else {
+            image.onload = function() {
+                basicComponent.setImageLoaded(uuid, true);
+                ctx.drawImage(image, left, top, cellWidth * zoom, cellHeight * zoom);
+            };
+        }
     }
 };
 
@@ -237,6 +249,16 @@ container.addEventListener(navigator.userAgent.indexOf("Firefox") > -1 ? "DOMMou
     scroller.doMouseZoom(e.detail ? (e.detail * 120) : -e.wheelDelta, e.timeStamp, e.pageX, e.pageY);
 }, false);
 
+container.addEventListener("click", function(e) {
+    var cellX = getCellX(e.pageX);
+    var cellY = getCellY(e.pageY);
+    var componentUUID = basicComponent.getComponentUUID(cellX, cellY);
+    if (componentUUID !== -1) {
+        basicComponent.activate(componentUUID);
+        redraw();
+    }
+});
+
 // Helpers
 function redraw() {
     var left = scroller.getValues()["left"];
@@ -260,18 +282,4 @@ function getCellY(y) {
 // Testing
 function test() {
     connect.logWires();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

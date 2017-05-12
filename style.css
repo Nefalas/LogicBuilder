@@ -44,37 +44,41 @@ html, body {
 }
 
 #tools button {
-    border: none;
     width: 100%;
     height: 40px;
     font-size: 20px;
     color: white;
     border-radius: 5px;
     margin-bottom: 10px;
+    border-style: solid;
 }
 
 #connect {
     background: #30657b;
-}
-
-#connect:active {
-    background: #2b5166;
+    border: 2px solid #408caa;
 }
 
 #delete-wires {
-    background: #ff5754;
+    background: #c44c4d;
+    border: 2px solid #ff5754;
 }
 
 #delete-wires:active {
-    background: #ad3c39;
+    background: #973c3d;
 }
 
 #reset-zoom, #run {
     background: #96b97c;
+    border: 2px solid #bde69e;
 }
 
 #reset-zoom:active, #run:active {
     background: #749160;
+}
+
+#test {
+    background: #a7a7a7;
+    border: 2px solid #dddddd;
 }
 
 .toolbox {
