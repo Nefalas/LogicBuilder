@@ -74,6 +74,26 @@ Connection.prototype.logWires = function() {
 };
 
 /**
+ * Returns the the wire at the given position, returns -1 if no wire is found
+ * @param x Horizontal cell position
+ * @param y Vertical cell position
+ * @returns {*} The wire if found, -1 if not
+ */
+Connection.prototype.getWire = function(x, y) {
+    for (var uuid in this.wires) {
+        if (this.wires.hasOwnProperty(uuid)) {
+            for (var i = 0; i < this.wires[uuid].points.length; i++) {
+                var point = this.wires[uuid].points[i];
+                if (point.getX() === x && point.getY() === y) {
+                    return this.wires[uuid]
+                }
+            }
+        }
+    }
+    return -1;
+};
+
+/**
  * Returns the UUID of the wire at the given position, returns -1 if no wire is found
  * @param x Horizontal cell position
  * @param y Vertical cell position

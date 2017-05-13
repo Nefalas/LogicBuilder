@@ -30,6 +30,35 @@ BasicComponent.prototype.newComponent = function(x, y, type) {
 };
 
 /**
+ * Returns the component at the given position, -1 if no component is found
+ * @param x Horizontal cell position of the component
+ * @param y Vertical cell position of the component
+ * @returns {*} The component if found, -1 if not
+ */
+BasicComponent.prototype.getComponent = function(x, y) {
+    for (var uuid in this.components) {
+        if (this.components.hasOwnProperty(uuid)) {
+            if (this.components[uuid].x === x && this.components[uuid].y === y) {
+                return this.components[uuid];
+            }
+        }
+    }
+    return -1;
+};
+
+/**
+ * Returns the component having the given UUID, -1 if no component is found
+ * @param uuid UUID of the component
+ * @returns {*} The component if found, -1 if not
+ */
+BasicComponent.prototype.getComponent = function(uuid) {
+    if (this.components.hasOwnProperty(uuid)) {
+        return this.components[uuid];
+    }
+    return -1;
+};
+
+/**
  * Returns the UUID of the component at the given position, returns -1 if no component is found
  * @param x Horizontal cell position of the component
  * @param y Vertical cell position of the component
@@ -175,4 +204,3 @@ BasicComponent.prototype.toggleSwitch = function(uuid) {
     component.imageSrc = component.active? "res/switch_closed.png": "res/switch_open.png";
     component.imageLoaded = false;
 };
-
