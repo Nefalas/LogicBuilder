@@ -10,8 +10,9 @@ var cellWidth = 40;
 var cellHeight = 40;
 
 // Map size
-var fullMapWidth = contentWidth * .08;
-var fullMapHeight = contentHeight * .08;
+var mapRatio = .08;
+var fullMapWidth = contentWidth * mapRatio;
+var fullMapHeight = contentHeight * mapRatio;
 
 // Grid elements
 var container = document.getElementById('grid-container');
@@ -31,8 +32,7 @@ var connectActive = false;
 // Tools functions
 function toggleConnect() {
     connectActive = !connectActive;
-    connectButton.style.background = connectActive? "#96b97c" : "#30657b";
-    connectButton.style.borderColor = connectActive? "#bde69e" : "#408caa";
+    connectButton.style.background = connectActive? "#dedede" : "none";
     container.style.cursor = connectActive? "crosshair" : "move";
 }
 
@@ -46,6 +46,14 @@ function resetZoom() {
     scroller.scrollTo(0, 0, false);
 }
 
+// Objects
+var tiling = new Tiling;
+var wireManager = new WireManager;
+var basCompManager = new BasicComponentManager;
+var elementManager = new ElementManager(basCompManager, wireManager);
+
+basCompManager.loadImages();
+
 $(".tool-img").draggable({
     helper: "clone"
 });
@@ -55,15 +63,11 @@ $("#grid").droppable({
         var x = getCellX(event.pageX);
         var y = getCellY(event.pageY);
         var type = ui.draggable[0].name;
-        basicComponent.newComponent(x, y, type);
+        basCompManager.newComponent(x, y, type);
+        elementManager.updateAllElements();
         redraw();
     }
 });
-
-// Objects
-var tiling = new Tiling;
-var wireManager = new WireManager;
-var basicComponent = new BasicComponent;
 
 // Render function called at every change
 var render = function(left, top, zoom) {
@@ -96,7 +100,7 @@ var drawCells = function(row, col, left, top, width, height, zoom) {
 // Paint function for dots
 var drawDots = function(row, col, left, top, width, height, zoom) {
     var wire = wireManager.getWire(col, row);
-    if (wire !== -1) {
+    if (wire !== undefined) {
         ctx.fillStyle = wire.active? "#ff0007" : "#ff939b";
     } else {
         ctx.fillStyle = "#686868";
@@ -114,23 +118,24 @@ var drawWires = function(row, col, left, top, width, height, zoom) {
     var uuid = wireManager.getWireUUID(col, row);
     if (uuid !== -1) {
         var wire = wireManager.wires[uuid];
+        var point = wire.getPoint(col, row);
 
         ctx.strokeStyle = wire.active? "#ff0007" : "#ff939b";
         ctx.lineWidth = 2;
 
-        if (wire.hasLeftNeighbour(col, row) || basicComponent.hasLeftComponent(col, row)) {
+        if (point.left !== undefined || basCompManager.hasLeftComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left, top+.5*height);
         }
-        if (wire.hasRightNeighbour(col, row) || basicComponent.hasRightComponent(col, row)) {
+        if (point.right !== undefined || basCompManager.hasRightComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+width, top+.5*height);
         }
-        if (wire.hasTopNeighbour(col, row) || basicComponent.hasTopComponent(col, row)) {
+        if (point.top !== undefined || basCompManager.hasTopComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+.5*width, top);
         }
-        if (wire.hasBottomNeighbour(col, row) || basicComponent.hasBottomComponent(col, row)) {
+        if (point.bottom !== undefined || basCompManager.hasBottomComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+.5*width, top+height);
         }
@@ -138,26 +143,19 @@ var drawWires = function(row, col, left, top, width, height, zoom) {
 };
 
 var drawBasicComponents = function(row, col, left, top, width, height, zoom) {
-    var uuid = basicComponent.getComponentUUID(col, row);
+    var uuid = basCompManager.getComponentUUID(col, row);
     if (uuid !== -1) {
-        var image = basicComponent.getImage(uuid);
-        if (basicComponent.isImageLoaded(uuid)) {
-            ctx.drawImage(image, left, top, cellWidth * zoom, cellHeight * zoom);
-        } else {
-            image.onload = function() {
-                basicComponent.setImageLoaded(uuid, true);
-                ctx.drawImage(image, left, top, cellWidth * zoom, cellHeight * zoom);
-            };
-        }
+        var image = basCompManager.getImage(uuid);
+        ctx.drawImage(image, left, top, cellWidth * zoom, cellHeight * zoom);
     }
 };
 
 // Draw function for map
 var drawMap = function(left, top, zoom) {
-    var mapLeft = (left*.08)/zoom;
-    var mapTop = (top*.08)/zoom;
-    var mapWidth = (clientWidth*.08)/zoom;
-    var mapHeight = (clientHeight*.08)/zoom;
+    var mapLeft = (left*mapRatio)/zoom;
+    var mapTop = (top*mapRatio)/zoom;
+    var mapWidth = (clientWidth*mapRatio)/zoom;
+    var mapHeight = (clientHeight*mapRatio)/zoom;
 
     mapCtx.clearRect(0, 0, fullMapWidth, fullMapHeight);
     mapCtx.fillStyle = "#c5c5c5";
@@ -232,6 +230,7 @@ document.addEventListener("mouseup", function(e) {
             return;
         }
 
+        elementManager.updateAllElements();
         redraw();
         connecting = false;
     } else {
@@ -252,9 +251,9 @@ container.addEventListener(navigator.userAgent.indexOf("Firefox") > -1 ? "DOMMou
 container.addEventListener("click", function(e) {
     var cellX = getCellX(e.pageX);
     var cellY = getCellY(e.pageY);
-    var componentUUID = basicComponent.getComponentUUID(cellX, cellY);
+    var componentUUID = basCompManager.getComponentUUID(cellX, cellY);
     if (componentUUID !== -1) {
-        basicComponent.activate(componentUUID);
+        basCompManager.activate(componentUUID);
         redraw();
     }
 });
@@ -282,4 +281,5 @@ function getCellY(y) {
 // Testing
 function test() {
     wireManager.logWires();
+    basCompManager.logBasicComponents();
 }

@@ -10,23 +10,30 @@
 
 <div id="tools">
     <div id="tools-title">
-        <p>Tools</p>
+        <p>Toolbox</p>
     </div>
     <div id="tools-container">
-        <button id="connect" onclick="toggleConnect()">Connect</button>
-        <button id="delete-wires" onclick="resetWires()">Reset wires</button>
-        <button id="reset-zoom" onclick="resetZoom()">Reset zoom</button>
-        <button id="run" onclick="run()">Run</button>
-        <button id="test" onclick="test()">Test</button>
+        <div class="toolbox">
+            <div class="toolbox-title">
+                <p>Tools</p>
+            </div>
+            <div class="toolbox-tools">
+                <img src="res/wire.png" id="connect" title="Wire" onclick="toggleConnect()">
+                <img src="res/delete_wires.png" title="Delete all wires" onclick="resetWires()">
+                <img src="res/magnifying_glass_reset.png" title="Reset zoom" onclick="resetZoom()">
+                <img src="res/test.png" title="Zoom" onclick="test()">
+            </div>
+        </div>
 
         <div class="toolbox">
             <div class="toolbox-title">
                 <p>Basic components</p>
             </div>
             <div class="toolbox-tools">
-                <img src="res/switch_open.png" name="switch_open" class="tool-img" title="Switch">
-                <img src="res/button_open.png" name="button_open" class="tool-img" title="Button">
+                <img src="res/switch_false.png" name="switch_" class="tool-img" title="Switch">
+                <img src="res/button_false.png" name="button_" class="tool-img" title="Button">
                 <img src="res/power.png" name="power" class="tool-img" title="Power source">
+                <img src="res/transistor.png" name="transistor" class="tool-img" title="Transistor">
             </div>
         </div>
     </div>
@@ -40,16 +47,32 @@
     <canvas id="map" width="320" height="160"></canvas>
 </div>
 
+<!-- Libraries -->
 <script type="text/javascript" src="libs/Animate.js"></script>
 <script type="text/javascript" src="libs/Scroller.js"></script>
 <script type="text/javascript" src="libs/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="libs/jquery-ui.js"></script>
+
+<!-- Helpers -->
 <script type="text/javascript" src="helpers/Tiling.js"></script>
 <script type="text/javascript" src="helpers/UUID.js"></script>
 <script type="text/javascript" src="helpers/Point.js"></script>
+
+<!-- Elements -->
 <script type="text/javascript" src="elements/Wire.js"></script>
-<script type="text/javascript" src="elements/BasicComponent.js"></script>
+
+<!-- Basic components -->
+<script type="text/javascript" src="elements/basic_components/Switch.js"></script>
+<script type="text/javascript" src="elements/basic_components/Button.js"></script>
+<script type="text/javascript" src="elements/basic_components/Power.js"></script>
+<script type="text/javascript" src="elements/basic_components/Transistor.js"></script>
+
+<!-- Managers -->
+<script type="text/javascript" src="managers/ElementManager.js"></script>
 <script type="text/javascript" src="managers/WireManager.js"></script>
+<script type="text/javascript" src="managers/BasicComponentManager.js"></script>
+
+<!-- Main code -->
 <script type="text/javascript" src="index.js"></script>
 
 </body>

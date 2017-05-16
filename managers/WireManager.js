@@ -3,33 +3,26 @@ WireManager = function() {
     this.currentUUID = "";
 };
 
-WireManager.prototype.getCurrentUUID = function() {
-    return this.currentUUID;
-};
-
-WireManager.prototype.setCurrentUUID = function(uuid) {
-    this.currentUUID = uuid;
-};
-
 WireManager.prototype.addPoint = function(x, y, color) {
     var uuid = this.getWireUUID(x, y);
     if (uuid !== -1) {
         this.currentUUID = uuid;
-        this.wires[uuid].addPoint(x, y);
+        this.wires[uuid].addPoint(x, y, false);
     } else {
         uuid = (new UUID()).generateUUID();
         this.currentUUID = uuid;
-        this.wires[uuid] = new Wire(x, y, color);
+        this.wires[uuid] = new Wire(x, y, uuid, color);
     }
 };
 
 WireManager.prototype.addPointToCurrent = function(x, y) {
     var uuid = this.getWireUUID(x, y);
-    this.wires[this.currentUUID].addPoint(x, y);
 
     if (uuid !== -1 && uuid !== this.currentUUID) {
         this.joinWires(uuid, this.currentUUID);
     }
+
+    this.wires[this.currentUUID].addPoint(x, y, true);
 };
 
 WireManager.prototype.getWireUUID = function(x, y) {
@@ -44,8 +37,7 @@ WireManager.prototype.getWireUUID = function(x, y) {
 };
 
 WireManager.prototype.getWire = function(x, y) {
-    var uuid = this.getWireUUID(x, y);
-    return (uuid !== -1)? this.wires[uuid] : -1;
+    return this.wires[this.getWireUUID(x, y)];
 };
 
 WireManager.prototype.hasWire = function(x, y) {
@@ -58,6 +50,10 @@ WireManager.prototype.joinWires = function(uuid1, uuid2) {
     this.currentUUID = uuid1;
 };
 
+WireManager.prototype.removePoint = function(x, y) {
+
+};
+
 WireManager.prototype.deleteAllWires = function() {
     this.wires = {};
     this.currentUUID = "";
@@ -68,10 +64,30 @@ WireManager.prototype.logWires = function() {
     for (var uuid in this.wires) {
         if (this.wires.hasOwnProperty(uuid)) {
             size++;
-            console.log(uuid);
+            console.log("Wire: " + uuid);
             for (var i = 0; i < this.wires[uuid].points.length; i++) {
                 var point = this.wires[uuid].points[i];
                 console.log("x:" + point.x + ", y: " + point.y);
+                if (point.left !== undefined) {
+                    console.log("   └> left: x: " + point.left.x  + ", y:" + point.left.y);
+                } else {
+                    console.log("   └> left: undefined");
+                }
+                if (point.right !== undefined) {
+                    console.log("   └> right: x: " + point.right.x  + ", y:" + point.right.y);
+                } else {
+                    console.log("   └> right: undefined");
+                }
+                if (point.top !== undefined) {
+                    console.log("   └> top: x: " + point.top.x  + ", y:" + point.top.y);
+                } else {
+                    console.log("   └> top: undefined");
+                }
+                if (point.bottom !== undefined) {
+                    console.log("   └> bottom: x: " + point.bottom.x  + ", y:" + point.bottom.y);
+                } else {
+                    console.log("   └> bottom: undefined");
+                }
             }
         }
     }

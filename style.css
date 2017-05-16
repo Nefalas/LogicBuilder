@@ -53,36 +53,9 @@ html, body {
     border-style: solid;
 }
 
-#connect {
-    background: #30657b;
-    border: 2px solid #408caa;
-}
-
-#delete-wires {
-    background: #c44c4d;
-    border: 2px solid #ff5754;
-}
-
-#delete-wires:active {
-    background: #973c3d;
-}
-
-#reset-zoom, #run {
-    background: #96b97c;
-    border: 2px solid #bde69e;
-}
-
-#reset-zoom:active, #run:active {
-    background: #749160;
-}
-
-#test {
-    background: #a7a7a7;
-    border: 2px solid #dddddd;
-}
-
 .toolbox {
     border: 2px solid #363636;
+    margin-bottom: 10px;
 }
 
 .toolbox-title {
@@ -95,14 +68,17 @@ html, body {
 }
 
 .toolbox-tools {
-    padding: 3px 2px 0 2px;
+    padding: 4px 2px 0 2px;
     background: #a7a7a7;
 }
 
-.tool-img {
+.toolbox-tools img {
     width: 50px;
     height: 50px;
     margin: 1px;
+}
+
+.tool-img {
     cursor: move;
     z-index: 100;
 }
