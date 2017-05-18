@@ -10,9 +10,11 @@ Wire = function(x, y, uuid, color) {
     this.points = [new Point(x, y)];
     this.color = color;
     this.uuid = uuid;
+
     this.active = false;
     this.hasSource = false;
     this.hasGround = false;
+
     this.connectsTo = [];
 };
 
@@ -98,25 +100,25 @@ Wire.prototype.removeFirstOccurrences = function(x, y) {
     var lastIndex = indexes[indexes.length-1];
     var lastPoint = this.points[lastIndex];
 
-    var left = lastPoint.left;
-    var right = lastPoint.right;
-    var top = lastPoint.top;
-    var bottom = lastPoint.bottom;
+    var left = lastPoint.neighbours.left;
+    var right = lastPoint.neighbours.right;
+    var top = lastPoint.neighbours.top;
+    var bottom = lastPoint.neighbours.bottom;
 
     for (var i = 0; i < indexes.length-1; i++) {
-        left = (this.points[indexes[i]].left !== undefined)? this.points[indexes[i]].left : left;
-        right = (this.points[indexes[i]].right !== undefined)? this.points[indexes[i]].right : right;
-        top = (this.points[indexes[i]].top !== undefined)? this.points[indexes[i]].top : top;
-        bottom = (this.points[indexes[i]].bottom !== undefined)? this.points[indexes[i]].bottom : bottom;
+        left = (this.points[indexes[i]].neighbours.left !== undefined)? this.points[indexes[i]].neighbours.left : left;
+        right = (this.points[indexes[i]].neighbours.right !== undefined)? this.points[indexes[i]].neighbours.right : right;
+        top = (this.points[indexes[i]].neighbours.top !== undefined)? this.points[indexes[i]].neighbours.top : top;
+        bottom = (this.points[indexes[i]].neighbours.bottom !== undefined)? this.points[indexes[i]].neighbours.bottom : bottom;
 
         this.removePoint(indexes[i]);
     }
 
     if (indexes.length > 1) {
-        lastPoint.left = left;
-        lastPoint.right = right;
-        lastPoint.top = top;
-        lastPoint.bottom = bottom;
+        lastPoint.neighbours.left = left;
+        lastPoint.neighbours.right = right;
+        lastPoint.neighbours.top = top;
+        lastPoint.neighbours.bottom = bottom;
 
         lastPoint.updateNeighboursNeighbours(this);
     }

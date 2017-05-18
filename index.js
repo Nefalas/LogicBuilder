@@ -64,7 +64,7 @@ $("#grid").droppable({
         var y = getCellY(event.pageY);
         var type = ui.draggable[0].name;
         basCompManager.newComponent(x, y, type);
-        elementManager.updateAllElements();
+        basCompManager.propagatePower();
         redraw();
     }
 });
@@ -100,8 +100,10 @@ var drawCells = function(row, col, left, top, width, height, zoom) {
 // Paint function for dots
 var drawDots = function(row, col, left, top, width, height, zoom) {
     var wire = wireManager.getWire(col, row);
-    if (wire !== undefined) {
-        ctx.fillStyle = wire.active? "#ff0007" : "#ff939b";
+    var point = (wire !== undefined)? wire.getPoint(col, row) : undefined;
+
+    if (point !== undefined) {
+        ctx.fillStyle = point.active? "#ff0007" : "#ff939b";
     } else {
         ctx.fillStyle = "#686868";
     }
@@ -114,31 +116,34 @@ var drawDots = function(row, col, left, top, width, height, zoom) {
 
 // Draw function for wires
 var drawWires = function(row, col, left, top, width, height, zoom) {
-
     var uuid = wireManager.getWireUUID(col, row);
+
     if (uuid !== -1) {
         var wire = wireManager.wires[uuid];
         var point = wire.getPoint(col, row);
 
-        ctx.strokeStyle = wire.active? "#ff0007" : "#ff939b";
+        ctx.strokeStyle = point.active? "#ff0007" : "#ff939b";
         ctx.lineWidth = 2;
 
-        if (point.left !== undefined || basCompManager.hasLeftComponent(col, row)) {
+        ctx.beginPath();
+        if (point.neighbours.left !== undefined || basCompManager.hasLeftComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left, top+.5*height);
         }
-        if (point.right !== undefined || basCompManager.hasRightComponent(col, row)) {
+        if (point.neighbours.right !== undefined || basCompManager.hasRightComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+width, top+.5*height);
         }
-        if (point.top !== undefined || basCompManager.hasTopComponent(col, row)) {
+        if (point.neighbours.top !== undefined || basCompManager.hasTopComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+.5*width, top);
         }
-        if (point.bottom !== undefined || basCompManager.hasBottomComponent(col, row)) {
+        if (point.neighbours.bottom !== undefined || basCompManager.hasBottomComponent(col, row)) {
             ctx.moveTo(left+.5*width, top+.5*height);
             ctx.lineTo(left+.5*width, top+height);
         }
+        ctx.stroke();
+        ctx.closePath();
     }
 };
 
@@ -230,7 +235,7 @@ document.addEventListener("mouseup", function(e) {
             return;
         }
 
-        elementManager.updateAllElements();
+        basCompManager.propagatePower();
         redraw();
         connecting = false;
     } else {
@@ -254,6 +259,7 @@ container.addEventListener("click", function(e) {
     var componentUUID = basCompManager.getComponentUUID(cellX, cellY);
     if (componentUUID !== -1) {
         basCompManager.activate(componentUUID);
+        basCompManager.propagatePower();
         redraw();
     }
 });
@@ -282,4 +288,7 @@ function getCellY(y) {
 function test() {
     wireManager.logWires();
     basCompManager.logBasicComponents();
+
+    basCompManager.propagatePower();
+    redraw();
 }

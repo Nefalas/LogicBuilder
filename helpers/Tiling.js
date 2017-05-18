@@ -104,7 +104,7 @@ Tiling.prototype.render = function(left, top, zoom, paint) {
 	var currentTop = startTop;
 	var currentLeft = startLeft;
 
-    ctx.beginPath();
+	ctx.beginPath();
 
 	// Render new squares
 	for (var row = startRow; row < (rows + startRow); row++) {
@@ -117,6 +117,7 @@ Tiling.prototype.render = function(left, top, zoom, paint) {
 		currentTop += tileHeight;
 	}
 
+	ctx.closePath();
 	ctx.stroke();
 	
 };
